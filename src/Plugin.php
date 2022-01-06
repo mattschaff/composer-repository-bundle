@@ -8,6 +8,9 @@ namespace Vaimo\ComposerRepositoryBundle;
 use Vaimo\ComposerRepositoryBundle\Managers;
 use Vaimo\ComposerRepositoryBundle\Analysers;
 
+use Composer\Composer;
+use Composer\IO\IOInterface;
+
 class Plugin implements \Composer\Plugin\PluginInterface, \Composer\Plugin\Capable,
     \Composer\EventDispatcher\EventSubscriberInterface
 {
@@ -25,7 +28,7 @@ class Plugin implements \Composer\Plugin\PluginInterface, \Composer\Plugin\Capab
      * @var \Vaimo\ComposerRepositoryBundle\Analysers\ComposerOperationAnalyser
      */
     private $operationAnalyser;
-    
+
     /**
      * @var string[]
      */
@@ -37,7 +40,7 @@ class Plugin implements \Composer\Plugin\PluginInterface, \Composer\Plugin\Capab
 
         $this->bundlesManager = new Managers\BundlesManager($composer, $io);
         $this->operationAnalyser = new Analysers\ComposerOperationAnalyser();
-        
+
         try {
             $input = new \Symfony\Component\Console\Input\ArgvInput();
         } catch (\Exception $e) {
@@ -67,7 +70,7 @@ class Plugin implements \Composer\Plugin\PluginInterface, \Composer\Plugin\Capab
         if (!$this->bundlesManager) {
             return;
         }
-        
+
         $this->bundlesManager->bootstrap();
     }
 
@@ -84,7 +87,15 @@ class Plugin implements \Composer\Plugin\PluginInterface, \Composer\Plugin\Capab
         if (!$this->operationAnalyser->isPluginUninstallOperation($event->getOperation())) {
             return;
         }
-        
+
         $this->bundlesManager = null;
+    }
+
+    public function deactivate(Composer $composer, IOInterface $io) {
+
+    }
+
+    public function uninstall(Composer $composer, IOInterface $io) {
+
     }
 }
